@@ -3,11 +3,13 @@
 This is the repository of the Rdata updater for the python language in linux.
 
 ## Requirements
-
+ conteudo ```
 python3 modules
 
-tkinter - pip install tk and git - pip install gitpython
- 
+tkinter - pip install tk 
+
+git - pip install gitpython
+``` 
 ## Usage
 
 sudo python3 updater.py
