@@ -3,7 +3,7 @@
 This is the repository of the Rdata updater for the python language in linux.
 
 ## Requirements
- conteudo ```
+conteudo```
 python3 modules
 
 tkinter - pip install tk 
