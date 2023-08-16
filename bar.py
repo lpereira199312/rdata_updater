@@ -1,68 +1,27 @@
-import git
-from rich import console, progress, theme
+import time
+from git import RemoteProgress
+from tqdm import tqdm
 
-
-class GitRemoteProgress(git.RemoteProgress):
-    OP_CODES = [
-        "BEGIN",
-        "CHECKING_OUT",
-        "COMPRESSING",
-        "COUNTING",
-        "END",
-        "FINDING_SOURCES",
-        "RECEIVING",
-        "RESOLVING",
-        "WRITING",
-    ]
-    OP_CODE_MAP = {
-        getattr(git.RemoteProgress, _op_code): _op_code for _op_code in OP_CODES
-    }
-
-    def __init__(self) -> None:
+class CloneProgress(RemoteProgress):
+    def __init__(self):
         super().__init__()
-        self.progressbar = progress.Progress(
-            progress.SpinnerColumn(),
-            progress.TextColumn("[progress.description]{task.description}"),
-            progress.BarColumn(),
-            progress.TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
-            "eta",
-            progress.TimeRemainingColumn(),
-            progress.TextColumn("{task.fields[message]}"),
-            console=console.Console(),
-            transient=False,
-        )
-        self.progressbar.start()
-        self.active_task = None
+        self.pbar = tqdm()
 
-    def __del__(self) -> None:
-        self.progressbar.stop()
+    def update(self, op_code, cur_count, max_count=None, message=''):
+        if (cur_count < 30.0):
+            self.pbar.colour = "red"
+        if (cur_count > 30.0 and cur_count < 50.0):
+            self.pbar.colour = "#FFA500"
+        if(cur_count > 50.1 and cur_count < 75.0):
+            self.pbar.colour = "yellow"
+        if (cur_count > 75.1 and cur_count < 99.0):
+            self.pbar.colour = "#3CB043"
+        if (cur_count < 100.0):
+            self.pbar.colour = "white"
+        self.pbar.total = max_count
+        self.pbar.n = cur_count
+        self.pbar.refresh()
 
-    @classmethod
-    def get_curr_op(cls, op_code: int) -> str:
-        """Get OP name from OP code."""
-        # Remove BEGIN- and END-flag and get op name
-        op_code_masked = op_code & cls.OP_MASK
-        return cls.OP_CODE_MAP.get(op_code_masked, "?").title()
 
-    def update(
-        self,
-        op_code: int,
-        cur_count: str | float,
-        max_count: str | float | None = None,
-        message: str | None = "",
-    ) -> None:
-        # Start new bar on each BEGIN-flag
-        if op_code & self.BEGIN:
-            self.curr_op = self.get_curr_op(op_code)
-            # logger.info("Next: %s", self.curr_op)
-            self.active_task = self.progressbar.add_task(
-                description=self.curr_op,
-                total=max_count,
-                message=message,
-            )
 
-        self.progressbar.update(
-            task_id=self.active_task,
-            completed=cur_count,
-            message=message,
-        )
+

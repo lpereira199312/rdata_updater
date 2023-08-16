@@ -6,9 +6,11 @@ This is the repository of the Rdata updater for the python language in linux.
 ```
 python3 modules
 
-tkinter - pip install tk 
+tkinter - sudo apt-get install python-tk
 
-git - pip install gitpython
+git - sudo pip install gitpython
+
+tqdm - sudo pip install tqdm
 ```
 ## Usage
 
@@ -22,5 +24,3 @@ You can contribute to the development of the ecosystem by helping to improve thi
 
 
 @author Luis Pereira
-
-

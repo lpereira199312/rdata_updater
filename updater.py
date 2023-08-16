@@ -1,21 +1,23 @@
-#pip install tk
-#pip install gitpython
 import time
 from tkinter.filedialog import askdirectory
 import os
 from git.repo.base import Repo
 import shutil
-from bar import GitRemoteProgress
+from bar import CloneProgress
 
 print("select rdata directory folder")
 path = askdirectory(title="rdata folder",initialdir=r'/',mustexist=True)
 check_dir = os.path.exists(path+"/rdata-server")
 print("try locate rdata")
 if check_dir == True:
+    dir = "/tmp/rdatatmp/"
+    if(os.path.isdir(dir)==True):
+        os.popen("sudo rm -R /tmp/rdatatmp/")
+        time.sleep(3)
     print("start clone git rdata")
     print("not close wait download finish")
     url_git = "https://github.com/reactioon/rdata.git"
-    temp_download = Repo.clone_from(url_git,f"/tmp/rdatatmp",progress=GitRemoteProgress())
+    temp_download = Repo.clone_from(url_git,f"/tmp/rdatatmp",progress=CloneProgress())
     print("finished clone git rdata ")
     try:
         os.popen("sudo systemctl stop rdata")
